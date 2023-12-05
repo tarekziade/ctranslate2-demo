@@ -2,6 +2,7 @@
 #include <vector>
 #include <sstream>
 #include <chrono>
+#include <unistd.h>
 
 #include "ctranslate2/translator.h"
 #include "sentencepiece_processor.h"
@@ -33,6 +34,22 @@ void token2Text(std::string& text) {
 }
 
 int main(int argc, char* argv[]) {
+
+  const char* model = "falcon-text-summarization-quantized";
+
+  int opt;
+  while ((opt = getopt(argc, argv, "m:")) != -1) {
+      switch (opt) {
+          case 'm':
+              model = optarg; // Get the value of the option argument
+              break;
+          default:
+              std::cerr << "Usage: " << argv[0] << " -m MODEL" << std::endl;
+              return 1;
+      }
+  }
+  std::cout << "Selected model: " << model << std::endl;
+
   const char* filename = "sandman.txt";
   std::string fileContent = readFileToString(filename);
   sentencepiece::SentencePieceProcessor processor;
@@ -48,7 +65,7 @@ int main(int argc, char* argv[]) {
   std::vector<std::vector<std::string>> text;
   text.push_back(pieces);
 
-  const std::string model_path("models/falcon-text-summarization-quantized");
+  const std::string model_path("models/" + std::string(model));
   const ctranslate2::models::ModelLoader model_loader(model_path);
 
   ctranslate2::Translator translator(model_loader);
