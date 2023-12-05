@@ -8,26 +8,22 @@
 
 std::string readFileToString(const std::string& filename) {
     std::ifstream fileStream(filename);
-
     if (!fileStream.is_open()) {
         std::cerr << "Failed to open file: " << filename << std::endl;
-        return ""; // Return an empty string or handle the error as needed
+        return "";
     }
-
     std::stringstream buffer;
-    buffer << fileStream.rdbuf(); // Read the entire file into the buffer
+    buffer << fileStream.rdbuf();
     fileStream.close();
-
-    return buffer.str(); // Return the content as a string
+    return buffer.str();
 }
 
-void convertOutput(std::string& text) {
+void token2Text(std::string& text) {
     size_t pos = text.find("\u2581");
     while (pos != std::string::npos) {
         text.replace(pos, 3, " "); // Replace 3 characters with a space
         pos = text.find("\u2581", pos + 1);
     }
-
     pos = text.find("<0x0A>");
     while (pos != std::string::npos) {
         text.replace(pos, 6, "\n"); // Replace 6 characters with newline
@@ -48,12 +44,11 @@ int main(int argc, char* argv[]) {
 
 
   processor.Encode(fileContent, &pieces);
-
   std::vector<std::vector<std::string>> text;
   text.push_back(pieces);
 
 
-  const std::string model_path("models/falcon-text-summarization");
+  const std::string model_path("models/falcon-text-summarization-quantized");
   const ctranslate2::models::ModelLoader model_loader(model_path);
 
   ctranslate2::Translator translator(model_loader);
@@ -62,7 +57,7 @@ int main(int argc, char* argv[]) {
   for (const auto& token : results[0].output()) {
     joinedString += token;
   }
-  convertOutput(joinedString);
+  token2Text(joinedString);
   std::cout << joinedString << std::endl;
   return 0;
 }
