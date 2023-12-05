@@ -33,6 +33,25 @@ void token2Text(std::string& text) {
     }
 }
 
+std::string cleanup(const std::string& str) {
+    std::string cleaned_str = str;
+    std::size_t pos = 0;
+
+    // Loop through the string and remove spaces before dots
+    while ((pos = cleaned_str.find(" .", pos)) != std::string::npos) {
+        cleaned_str.erase(pos, 1); // Remove the space
+    }
+
+    // Trim leading whitespace
+    cleaned_str.erase(cleaned_str.begin(), std::find_if_not(cleaned_str.begin(), cleaned_str.end(), ::isspace));
+
+    // Trim trailing whitespace
+    cleaned_str.erase(std::find_if_not(cleaned_str.rbegin(), cleaned_str.rend(), ::isspace).base(), cleaned_str.end());
+
+
+    return cleaned_str;
+}
+
 int main(int argc, char* argv[]) {
 
   const char* model = "falcon-text-summarization-quantized";
@@ -52,6 +71,8 @@ int main(int argc, char* argv[]) {
 
   const char* filename = "sandman.txt";
   std::string fileContent = readFileToString(filename);
+  std::cout << "Input Text size: " << fileContent.length() << std::endl;
+
   sentencepiece::SentencePieceProcessor processor;
   std::vector<std::string> pieces;
 
@@ -60,9 +81,11 @@ int main(int argc, char* argv[]) {
      std::cerr << status.ToString() << std::endl;
   }
 
-
   processor.Encode(fileContent, &pieces);
   std::vector<std::vector<std::string>> text;
+  std::cout << "Number of tokens: " << pieces.size() << std::endl;
+  std::cout << "" << std::endl;
+
   text.push_back(pieces);
 
   const std::string model_path("models/" + std::string(model));
@@ -83,7 +106,7 @@ int main(int argc, char* argv[]) {
     tokens++;
   }
   token2Text(joinedString);
-  std::cout << joinedString << std::endl;
+  std::cout << cleanup(joinedString) << std::endl;
   std::cout << tokens << " tokens generated (" << std::fixed << std::setprecision(2)
               << (tokens / duration.count()) << " token/s)" << std::endl;
   return 0;
