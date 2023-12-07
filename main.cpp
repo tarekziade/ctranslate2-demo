@@ -53,7 +53,6 @@ std::string cleanup(const std::string& str) {
 }
 
 int main(int argc, char* argv[]) {
-
   const char* model = "falcon-text-summarization-quantized";
 
   int opt;
