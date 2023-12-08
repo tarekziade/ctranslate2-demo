@@ -6,7 +6,7 @@ bin/python:
 .PHONY: build
 build:
 	mkdir -p build
-	cd build && cmake -DCMAKE_OSX_ARCHITECTURES=arm64 -DWITH_ACCELERATE=ON -DWITH_MKL=OFF -DOPENMP_RUNTIME=NONE .. &&	make -j4
+	cd build && CC=/usr/local/opt/llvm/bin/clang cmake -DCMAKE_OSX_ARCHITECTURES=arm64 -DWITH_ACCELERATE=ON -DWITH_MKL=OFF -DOPENMP_RUNTIME=NONE -DWITH_RUY=ON .. &&	make -j4
 
 .PHONY: model
 model: bin/python

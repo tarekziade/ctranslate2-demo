@@ -99,6 +99,7 @@ int main(int argc, char* argv[]) {
 
   std::string joinedString = "";
   int tokens = 0;
+  std::cout << "Duration: " << duration.count() << "s" << std::endl;
 
   for (const auto& token : results[0].output()) {
     joinedString += token;
